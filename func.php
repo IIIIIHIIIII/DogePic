@@ -40,13 +40,13 @@ public  function getFileBase($name){
     return false;
 }
     
-public  function addTodb($address,$file) {
+public  function addTodb($address,$file,$tag) {
     $func = new func();
     $con = mysqli_connect($func->dbaddress,$func->dbuser,$func->dbpass,$func->db);
     if($con->connect_error) {
      echo "Something went wrong."; 
     }
-    mysqli_query($con,"insert into picdata(name,address) values('".$file."','".$address."')");
+    mysqli_query($con,"insert into picdata(name,address,tag) values('".$file."','".$address."','".$tag."')");
     $con->close();
 }
     
@@ -100,6 +100,22 @@ public function addip($file,$ip) {
     }
         
     mysqli_query($con,"insert into picip(name,ip) values('".$file."',aes_encrypt('".$ip."','".$func->aeskey."'))") or die("fff");
+     $con->close();
+}
+    
+public function checktag($file) {
+    $func = new func();
+    $con = mysqli_connect($func->dbaddress,$func->dbuser,$func->dbpass,$func->db);
+    if($con->connect_error) {
+        echo "Something went wrong."; 
+        }
+        
+    $result = mysqli_query($con,"select * from picdata where name = '".$file."'");
+    $data = $result->fetch_array();
+    if($data["tag"] == "SFW") {
+        return false;   
+    }
+    return true;
      $con->close();
 }
     
